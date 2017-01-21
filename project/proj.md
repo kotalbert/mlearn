@@ -1,18 +1,8 @@
----
-title: "Practical Machine Learning Course Project"
-author: "Pawel Daniluk"
-date: '2017-01-20'
-output: 
-  html_document: 
-    keep_md: yes
----
+# Practical Machine Learning Course Project
+Pawel Daniluk  
+2017-01-20  
 
-```{r, setup, include=FALSE}
 
-# Load the libraries
-library(dplyr)
-library(caret)
-```
 
 # Summary 
 
@@ -40,7 +30,8 @@ In order to train and validate a machine learning model, the training set must b
 
 First, the data is loaded into memory, and metadata, like user name or time stamp are dropped.
 
-```{r, dat, cache=TRUE}
+
+```r
 # Helper functions for data preprocessing
 # function to remove metadata from data set 
 mdr <- function(s) {
@@ -64,7 +55,8 @@ traind <- mdr(traind)
 
 Since the data set was relatively large, it was safe to divide the data into two equally large groups. Random seed is fixed to be 12345 numeral, for reproducibility.
 
-```{r, datapart}
+
+```r
 # Fix random seed for reproducibility
 set.seed(12345)
 # Partition the data
@@ -77,7 +69,8 @@ val <- traind[-it, ]
 
 Since this analysis was performed on a single computer, not on large computational cluster, even relatively small dataset required large amounts of processing power. Therefore some reduction of predictor number was required. The near zero variance predictors were removed and then number of predictors were further reduced with Principal Components Analysis.
 
-```{r, dimred}
+
+```r
 # find index of target variable in set 
 i <- ti(trn)
 # Remove near zero variables form the data sets
@@ -88,7 +81,8 @@ nzvv <- val[-nzvar]
 ```
 It was observed, that some predictors have missing values. For most machine learning techniques, missing data must be dealt with. One of simple techniques discussed is k-nearest neighbours method.
 
-```{r, inp}
+
+```r
 # Impute missing data with knnImpute method, on training, validation and new data
 inpobj <- preProcess(nzvt[-i], method="knnImpute")
 
@@ -99,7 +93,8 @@ inpval <- predict(inpobj, nzvv[-i])
 
 Finally, after imputing missing data, the data set dimensions can be further reduced with PCA.
 
-```{r, pca}
+
+```r
 # Reduce predictors with PCA
 pcaobj <- preProcess(inptrain[-i], method="pca")
 pcatrain <- predict(pcaobj, inptrain[-i])
@@ -110,7 +105,8 @@ pcaval <- predict(pcaobj, inpval[-i])
 
 Three basic models were fit. The classification tree, using `rpart` method, boosting, using `bgm` and random forest, using `rf` method. Every method requires, that there is no missing data in training set. Additionally, random forest and boosting are computationally intensive, therefore both models were trained on data reduced by PCA.
 
-```{r, train, eval=FALSE}
+
+```r
 # Train classification tree on not reduced data
 rpfit <- train(classe~., data=inptrain, method="rpart")
 
@@ -121,14 +117,12 @@ rffit <- train(classe~.,data=pcatrain, method="rf")
 
 # Model validation
 
-```{r, modload, include=FALSE}
-# load pre-trained models: rpfit, bfit, rffit
-load("models")
-```
+
 
 After models were trained, their accuracy on validation subset can be compared. First, models must be applied to new data, using `predict` method, and then accuracy can be measured using `confusionMatrix`. Both functions are part of the `caret` package.
 
-```{r, pred, cache=TRUE, warning=FALSE, message=FALSE}
+
+```r
 # Apply models to validation sample
 rpval <- predict(rpfit, inpval)
 bval <- predict(bfit, pcaval)
@@ -139,7 +133,8 @@ It can be observed, that both boosting and random forest methods are significant
 
 ## Decision tree confusion matrix
 
-```{r, rpc, eval=FALSE}
+
+```r
 confusionMatrix(rpval, inpval$classe)
 ```
 ```
@@ -166,7 +161,8 @@ Overall Statistics
 
 ## Boosting confusion matrix
 
-```{r, bc, eval=FALSE}
+
+```r
 confusionMatrix(bval, inpval$classe)
 ```
 
@@ -194,7 +190,8 @@ Overall Statistics
 
 ## Random Forest confusion matrix
 
-```{r, rfc, eval=FALSE}
+
+```r
 confusionMatrix(rfval, inpval$classe)
 ```
 
