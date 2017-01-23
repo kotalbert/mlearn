@@ -8,13 +8,16 @@ Pawel Daniluk
 
 This report is a brief demonstration of machine learning techniques, discussed in "Practical Machine Learning" course by Johns Hopkins University. The data set provided for the exercise was pre processed, reduced in dimensions and used to train three prediction models.
 
+Since the goal of this project is to demonstrate basic machine learning functionalities, the statistical analysis of the problem was not conducted. The feature
+
 For the purpose of this project, `caret` package was used. Three basic model models were fitted:
 
 -   Classification Tree
 -   Boosting
 -   Random Forest
 
-Random Forrest model produced most accurate predictions.
+Random Forrest model produced most accurate predictions, achieving 92% on validation subset, with dimensions reduced with PCA algorithm. The prediction accuracy on test data (verified by quiz) was 95%.
+
 
 # Training Data set
 
@@ -115,11 +118,17 @@ bfit <- train(classe~.,data=pcatrain, method="gbm", verbose=FALSE)
 rffit <- train(classe~.,data=pcatrain, method="rf")
 ```
 
-# Model validation
+# Models validation
 
+## Definition of error measure
 
+In order to validate the prediction model, a definition of prediction error measure must be developed. In this problem, the most suitable measure is Accuracy, defined as percentage of True Positives in total predictions.
 
-After models were trained, their accuracy on validation subset can be compared. First, models must be applied to new data, using `predict` method, and then accuracy can be measured using `confusionMatrix`. Both functions are part of the `caret` package.
+The `caret` package has a `confusionMatrix` function, which delivers Accuracy, as well as other statistics, such as Sensitivity and Specificity. This function deliverers also a confusion matrix, displaying predicted and actual values, which can be used to assess areas of poor predictions.
+
+## Prediction 
+
+After models were trained, their accuracy on validation subset can be compared. First, models must be applied to new data, using `predict` method, and then accuracy can be measured using `confusionMatrix`. 
 
 
 ```r

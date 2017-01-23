@@ -127,13 +127,14 @@ $(document).ready(function () {
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <p>This report is a brief demonstration of machine learning techniques, discussed in “Practical Machine Learning” course by Johns Hopkins University. The data set provided for the exercise was pre processed, reduced in dimensions and used to train three prediction models.</p>
+<p>Since the goal of this project is to demonstrate basic machine learning functionalities, the statistical analysis of the problem was not conducted. The feature</p>
 <p>For the purpose of this project, <code>caret</code> package was used. Three basic model models were fitted:</p>
 <ul>
 <li>Classification Tree</li>
 <li>Boosting</li>
 <li>Random Forest</li>
 </ul>
-<p>Random Forrest model produced most accurate predictions.</p>
+<p>Random Forrest model produced most accurate predictions, achieving 92% on validation subset, with dimensions reduced with PCA algorithm. The prediction accuracy on test data (verified by quiz) was 95%.</p>
 </div>
 <div id="training-data-set" class="section level1">
 <h1>Training Data set</h1>
@@ -204,14 +205,22 @@ rpfit &lt;- train(classe~., data=inptrain, method=&quot;rpart&quot;)
 bfit &lt;- train(classe~.,data=pcatrain, method=&quot;gbm&quot;, verbose=FALSE)
 rffit &lt;- train(classe~.,data=pcatrain, method=&quot;rf&quot;)</code></pre>
 </div>
-<div id="model-validation" class="section level1">
-<h1>Model validation</h1>
-<p>After models were trained, their accuracy on validation subset can be compared. First, models must be applied to new data, using <code>predict</code> method, and then accuracy can be measured using <code>confusionMatrix</code>. Both functions are part of the <code>caret</code> package.</p>
+<div id="models-validation" class="section level1">
+<h1>Models validation</h1>
+<div id="definition-of-error-measure" class="section level2">
+<h2>Definition of error measure</h2>
+<p>In order to validate the prediction model, a definition of prediction error measure must be developed. In this problem, the most suitable measure is Accuracy, defined as percentage of True Positives in total predictions.</p>
+<p>The <code>caret</code> package has a <code>confusionMatrix</code> function, which delivers Accuracy, as well as other statistics, such as Sensitivity and Specificity. This function deliverers also a confusion matrix, displaying predicted and actual values, which can be used to assess areas of poor predictions.</p>
+</div>
+<div id="prediction" class="section level2">
+<h2>Prediction</h2>
+<p>After models were trained, their accuracy on validation subset can be compared. First, models must be applied to new data, using <code>predict</code> method, and then accuracy can be measured using <code>confusionMatrix</code>.</p>
 <pre class="r"><code># Apply models to validation sample
 rpval &lt;- predict(rpfit, inpval)
 bval &lt;- predict(bfit, pcaval)
 rfval &lt;- predict(rffit, pcaval)</code></pre>
 <p>It can be observed, that both boosting and random forest methods are significantly more accurate than classification tree, despite being trained on reduced data set.</p>
+</div>
 <div id="decision-tree-confusion-matrix" class="section level2">
 <h2>Decision tree confusion matrix</h2>
 <pre class="r"><code>confusionMatrix(rpval, inpval$classe)</code></pre>
